@@ -47,7 +47,9 @@
     padding: 10px 16px; border-radius: 8px; font-size: 14px;
     -webkit-appearance: none; appearance: none; cursor: pointer;
   }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn-primary { background: var(--accent); border-color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
   input[type="file"] { display: none; }
 
   .stats {
@@ -94,20 +96,13 @@
     border-radius: 8px; padding: 8px 10px; margin-bottom: 4px;
     font-size: 13px;
   }
-  .kanban-item:active { background: rgba(99,102,241,0.15); }
 
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   thead { display: none; }
   tbody tr {
     display: block; padding: 12px; border-bottom: 1px solid var(--border);
-    cursor: pointer;
   }
-  tbody tr:active { background: rgba(99,102,241,0.1); }
-  tbody tr td {
-    display: inline; padding: 0; border: none; background: none !important;
-  }
-  tbody tr td:first-child::after { content: " — "; color: var(--muted); }
-  tbody tr td:nth-child(2)::after { content: " · "; color: var(--muted); }
+  tbody tr td { display: inline; padding: 0; border: none; background: none !important; vertical-align: middle; }
 
   .stage-badge {
     display: inline-block; padding: 2px 8px; border-radius: 999px;
@@ -122,66 +117,52 @@
 
   .hidden { display: none !important; }
 
-  /* ═══ Detail Panel (replaces modal) ═══ */
-  .detail-overlay {
+  .overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,0.6); z-index: 2000;
     overflow-y: auto;
-    transition: opacity 0.2s;
   }
-  .detail-panel {
+  .panel {
     background: var(--card);
     margin: 60px auto 30px;
-    max-width: 480px;
+    max-width: 520px;
     border-radius: 16px;
     padding: 24px;
     position: relative;
   }
   @media (max-width: 500px) {
-    .detail-panel {
-      margin: 0;
-      border-radius: 0;
-      min-height: 100vh;
-      max-width: 100%;
-    }
-    .detail-overlay {
-      display: block;
-    }
+    .panel { margin: 0; border-radius: 0; min-height: 100vh; max-width: 100%; }
   }
-  .detail-panel .d-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  .panel .ph {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
   }
-  .detail-panel .d-header h2 { margin: 0; font-size: 20px; }
-  .detail-panel .d-close {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-size: 20px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-    line-height: 1;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .panel .ph h2 { margin: 0; font-size: 20px; }
+  .panel .xbtn {
+    background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+    color: var(--text); font-size: 20px; padding: 10px 14px; border-radius: 10px;
+    cursor: pointer; -webkit-appearance: none; appearance: none; line-height: 1;
+    min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;
   }
-  .detail-panel .d-close:active { background: rgba(255,255,255,0.15); }
-  .d-field { margin-bottom: 12px; }
-  .d-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-  .d-value { font-size: 15px; }
-  .d-changelog { margin-top: 4px; }
-  .d-changelog-entry {
-    padding: 8px 0; border-bottom: 1px solid var(--border);
-    font-size: 13px;
+  .df { margin-bottom: 12px; }
+  .dl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .dv { font-size: 15px; }
+  .ce { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .ce:last-child { border-bottom: none; }
+
+  .editor-msg {
+    width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 8px; color: var(--text);
+    font-size: 14px; box-sizing: border-box;
   }
-  .d-changelog-entry:last-child { border-bottom: none; }
+  .editor-ta {
+    width: 100%; min-height: 400px; padding: 12px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+    font-family: 'SF Mono', Menlo, monospace; resize: vertical; box-sizing: border-box;
+  }
+  .editor-ta:focus { border-color: var(--accent); outline: none; }
+
+  .status-box { margin-top: 12px; padding: 12px; border-radius: 8px; display: none; }
 </style>
 </head>
 <body>
@@ -190,7 +171,7 @@
   <header>
     <div>
       <h1>🔬 Skill Lifecycle</h1>
-      <div class="subtitle">Tap any skill for details</div>
+      <div class="subtitle">Tap any skill for details · ✏️ to edit</div>
     </div>
     <div class="toolbar">
       <button class="btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
@@ -208,28 +189,51 @@
   </div>
 </div>
 
-<!-- Detail Panel (full-screen overlay on mobile) -->
-<div id="detailOverlay" class="detail-overlay hidden">
-  <div class="detail-panel" id="detailPanel">
-    <div class="d-header">
-      <h2 id="detailName">Skill</h2>
-      <button class="d-close" id="detailCloseBtn">✕</button>
+<!-- Detail Panel -->
+<div id="overlayDetail" class="overlay hidden">
+  <div class="panel">
+    <div class="ph">
+      <h2 id="dtName">Skill</h2>
+      <button class="xbtn" id="dtCloseBtn">✕</button>
     </div>
-    <div id="detailBody"></div>
+    <div id="dtBody"></div>
+  </div>
+</div>
+
+<!-- Editor Panel -->
+<div id="overlayEditor" class="overlay hidden">
+  <div class="panel">
+    <div class="ph">
+      <h2 id="edTitle">Edit Skill</h2>
+      <button class="xbtn" id="edCloseBtn">✕</button>
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="dl">Commit Message</div>
+      <input class="editor-msg" id="edMsg" placeholder="Describe what changed..." autocomplete="off">
+    </div>
+    <div style="margin-bottom:12px">
+      <div class="dl">SKILL.md Content</div>
+      <textarea class="editor-ta" id="edContent" spellcheck="false"></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" id="edCancelBtn" style="flex:1">Cancel</button>
+      <button class="btn btn-primary" id="edSaveBtn" style="flex:2">💾 Save & Create PR</button>
+    </div>
+    <div class="status-box" id="edStatus"></div>
   </div>
 </div>
 
 <script>
+// ── Data ──
 const STAGES = ['draft','proposed','reviewed','staged','released','deprecated'];
 const STAGE_COLORS = {draft:'var(--slate)',proposed:'var(--blue)',reviewed:'var(--yellow)',staged:'var(--orange)',released:'var(--green)',deprecated:'var(--red)'};
-
-let data = null;
+var data = null;
 
 function reloadData() {
   fetch('/skills-registry.json')
-    .then(r => { if(!r.ok) throw Error(); return r.json(); })
-    .then(d => { data = d; render(); })
-    .catch(() => { data = {skills:{}}; render(); });
+    .then(function(r) { if(!r.ok) throw Error(); return r.json(); })
+    .then(function(d) { data = d; render(); })
+    .catch(function() { data = {skills:{}}; render(); });
 }
 
 function loadFromFile(e) {
@@ -250,109 +254,149 @@ function render() {
   renderList(entries);
 }
 
-function renderStats(entries) {
-  var total = entries.length;
-  var released = entries.filter(function(e) { return e[1].stage === 'released'; }).length;
-  var draft = entries.filter(function(e) { return e[1].stage === 'draft'; }).length;
-  var deprecated = entries.filter(function(e) { return e[1].stage === 'deprecated'; }).length;
+function renderStats(e) {
+  var t = e.length, r = e.filter(function(x){return x[1].stage==='released'}).length;
+  var d = e.filter(function(x){return x[1].stage==='draft'}).length;
+  var p = e.filter(function(x){return x[1].stage==='deprecated'}).length;
   document.getElementById('statsRow').innerHTML =
-    '<div class="stat-card"><div class="num" style="color:var(--accent)">'+total+'</div><div class="lbl">Total</div></div>'+
-    '<div class="stat-card"><div class="num" style="color:var(--green)">'+released+'</div><div class="lbl">Released</div></div>'+
-    '<div class="stat-card"><div class="num" style="color:var(--slate)">'+draft+'</div><div class="lbl">Drafts</div></div>'+
-    '<div class="stat-card"><div class="num" style="color:var(--red)">'+deprecated+'</div><div class="lbl">Deprecated</div></div>';
+    '<div class="stat-card"><div class="num" style="color:var(--accent)">'+t+'</div><div class="lbl">Total</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--green)">'+r+'</div><div class="lbl">Released</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--slate)">'+d+'</div><div class="lbl">Drafts</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--red)">'+p+'</div><div class="lbl">Deprecated</div></div>';
 }
 
-function renderPipeline(entries) {
+function renderPipeline(e) {
   document.getElementById('pipeline').innerHTML = STAGES.map(function(s) {
-    var c = entries.filter(function(e) { return e[1].stage === s; }).length;
-    var active = c > 0 ? ' active' : '';
-    return '<div class="pipeline-stage'+active+'"><div class="sn">'+s+'</div><div class="sc" style="color:'+STAGE_COLORS[s]+'">'+c+'</div></div>';
+    var c = e.filter(function(x){return x[1].stage===s}).length;
+    var a = c>0?' active':'';
+    return '<div class="pipeline-stage'+a+'"><div class="sn">'+s+'</div><div class="sc" style="color:'+STAGE_COLORS[s]+'">'+c+'</div></div>';
   }).join('');
 }
 
-function renderKanban(entries) {
+function renderKanban(e) {
   document.getElementById('kanban').innerHTML = STAGES.map(function(s) {
-    var items = entries.filter(function(e) { return e[1].stage === s; });
-    var html = '<div class="kanban-col"><h3 style="color:'+STAGE_COLORS[s]+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</h3>';
-    items.forEach(function(e) {
-      html += '<div class="kanban-item" onclick="showDetail(\''+e[0]+'\')"><div>'+e[0]+'</div><div style="font-size:11px;color:var(--muted)">v'+ (e[1].version||'?') +'</div></div>';
-    });
-    html += '</div>';
-    return html;
+    var items = e.filter(function(x){return x[1].stage===s});
+    var h = '<div class="kanban-col"><h3 style="color:'+STAGE_COLORS[s]+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</h3>';
+    items.forEach(function(x){h+='<div class="kanban-item" onclick="showDetail(\''+x[0]+'\')"><div>'+x[0]+'</div><div style="font-size:11px;color:var(--muted)">v'+(x[1].version||'?')+'</div></div>';});
+    h += '</div>'; return h;
   }).join('');
 }
 
-function renderList(entries) {
+function renderList(e) {
   var el = document.getElementById('skillList');
-  if(entries.length === 0) {
+  if(e.length===0) {
     el.innerHTML = '<div style="text-align:center;padding:48px 24px;color:var(--muted)"><h3 style="color:var(--text);margin-bottom:8px">No skills tracked</h3><p>Run skillctl init to create one</p></div>';
     return;
   }
-  var html = '<table><tbody>';
-  entries.sort(function(a,b) {
-    var ia = STAGES.indexOf(a[1].stage);
-    var ib = STAGES.indexOf(b[1].stage);
-    return ia - ib || (a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0));
+  e.sort(function(a,b){var i=STAGES.indexOf(a[1].stage),j=STAGES.indexOf(b[1].stage);return i-j||(a[0]<b[0]?-1:(a[0]>b[0]?1:0));});
+  var h = '<table><tbody>';
+  e.forEach(function(x) {
+    var n=x[0], s=x[1], sc='stage-'+(s.stage||'draft'), v=s.version||'0.1.0';
+    h += '<tr><td style="width:100%" onclick="showDetail(\''+n+'\')"><strong>'+n+'</strong> <span style="font-size:12px;color:var(--muted)">v'+v+'</span></td>';
+    h += '<td onclick="showDetail(\''+n+'\')"><span class="stage-badge '+sc+'">'+(s.stage||'?')+'</span></td>';
+    h += '<td style="text-align:right"><button class="btn btn-sm" onclick="openEditor(\''+n+'\')">✏️</button></td></tr>';
   });
-  entries.forEach(function(e) {
-    var name = e[0], s = e[1];
-    var stageClass = 'stage-'+(s.stage||'draft');
-    var ver = s.version || '0.1.0';
-    var author = s.author || '—';
-    var updated = s.updated ? s.updated.slice(0,10) : '';
-    html += '<tr onclick="showDetail(\''+name+'\')"><td><strong>'+name+'</strong></td><td><span class="stage-badge '+stageClass+'">'+(s.stage||'?')+'</span></td><td>v'+ver+'</td></tr>';
-  });
-  html += '</tbody></table>';
-  el.innerHTML = html;
+  h += '</tbody></table>';
+  el.innerHTML = h;
 }
 
+// ── Detail Panel ──
 function showDetail(name) {
-  if(!data || !data.skills[name]) return;
-  var s = data.skills[name];
-  document.getElementById('detailName').textContent = name;
-  var stageClass = 'stage-'+(s.stage||'draft');
-  var changelog = s.changelog || [];
-  var html = '';
-  html += '<div class="d-field"><div class="d-label">Stage</div><div class="d-value"><span class="stage-badge '+stageClass+'">'+(s.stage||'unknown')+'</span></div></div>';
-  html += '<div class="d-field"><div class="d-label">Version</div><div class="d-value">v'+(s.version||'0.1.0')+'</div></div>';
-  if(s.author) html += '<div class="d-field"><div class="d-label">Author</div><div class="d-value">'+s.author+'</div></div>';
-  if(s.owners && s.owners.length) html += '<div class="d-field"><div class="d-label">Owners</div><div class="d-value">'+s.owners.join(', ')+'</div></div>';
-  if(s.created) html += '<div class="d-field"><div class="d-label">Created</div><div class="d-value">'+s.created.slice(0,10)+'</div></div>';
-  if(s.updated) html += '<div class="d-field"><div class="d-label">Last Updated</div><div class="d-value">'+s.updated.slice(0,10)+'</div></div>';
-  if(changelog.length) {
-    html += '<div class="d-field"><div class="d-label">Changelog</div><div class="d-changelog">';
-    changelog.forEach(function(e) {
-      html += '<div class="d-changelog-entry"><span class="stage-badge stage-'+e.stage+'">'+e.stage+'</span> <span>'+ (e.date||'') +': '+ (e.note||'') +'</span></div>';
-    });
-    html += '</div></div>';
+  if(!data||!data.skills[name]) return;
+  var s = data.skills[name], sc='stage-'+(s.stage||'draft'), cl=s.changelog||[];
+  document.getElementById('dtName').textContent = name;
+  var h = '';
+  h += '<div class="df"><div class="dl">Stage</div><div class="dv"><span class="stage-badge '+sc+'">'+(s.stage||'?')+'</span></div></div>';
+  h += '<div class="df"><div class="dl">Version</div><div class="dv">v'+(s.version||'0.1.0')+'</div></div>';
+  if(s.author) h += '<div class="df"><div class="dl">Author</div><div class="dv">'+s.author+'</div></div>';
+  if(s.owners&&s.owners.length) h += '<div class="df"><div class="dl">Owners</div><div class="dv">'+s.owners.join(', ')+'</div></div>';
+  if(s.created) h += '<div class="df"><div class="dl">Created</div><div class="dv">'+s.created.slice(0,10)+'</div></div>';
+  if(s.updated) h += '<div class="df"><div class="dl">Last Updated</div><div class="dv">'+s.updated.slice(0,10)+'</div></div>';
+  if(cl.length) {
+    h += '<div class="df"><div class="dl">Changelog</div>';
+    cl.forEach(function(e){h+='<div class="ce"><span class="stage-badge stage-'+e.stage+'">'+e.stage+'</span> '+(e.date||'')+': '+(e.note||'')+'</div>';});
+    h += '</div>';
   }
-  document.getElementById('detailBody').innerHTML = html;
-  document.getElementById('detailOverlay').classList.remove('hidden');
+  h += '<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">';
+  h += '<button class="btn btn-primary" onclick="editCurrentSkill()" style="width:100%;padding:12px">✏️ Edit This Skill</button></div>';
+  document.getElementById('dtBody').innerHTML = h;
+  document.getElementById('overlayDetail').classList.remove('hidden');
+  window._detailSkillName = name;
 }
 
-// Close handlers — DIRECT, no event delegation, no bubbling issues
-document.getElementById('detailCloseBtn').onclick = function() {
-  document.getElementById('detailOverlay').classList.add('hidden');
+function editCurrentSkill() {
+  closeDetail();
+  if(window._detailSkillName) openEditor(window._detailSkillName);
+}
+
+function closeDetail() {
+  document.getElementById('overlayDetail').classList.add('hidden');
+}
+
+document.getElementById('dtCloseBtn').onclick = closeDetail;
+document.getElementById('dtCloseBtn').ontouchend = function(e){e.preventDefault();closeDetail();};
+document.getElementById('overlayDetail').onclick = function(e){if(e.target===this)closeDetail();};
+document.getElementById('overlayDetail').ontouchend = function(e){if(e.target===this){e.preventDefault();closeDetail();}};
+
+// ── Editor ──
+var editingName = null;
+
+function openEditor(name) {
+  editingName = name;
+  document.getElementById('edTitle').textContent = 'Edit: '+name;
+  document.getElementById('edContent').value = 'Loading...';
+  document.getElementById('edMsg').value = '';
+  var sb = document.getElementById('edStatus');
+  sb.style.display = 'none';
+  document.getElementById('overlayEditor').classList.remove('hidden');
+
+  fetch('/api/skill-content?name='+encodeURIComponent(name))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.error) document.getElementById('edContent').value = 'Error: '+d.error;
+      else document.getElementById('edContent').value = d.content;
+    })
+    .catch(function(){document.getElementById('edContent').value = 'Failed to load skill';});
+}
+
+function closeEditor() {
+  document.getElementById('overlayEditor').classList.add('hidden');
+}
+
+document.getElementById('edCloseBtn').onclick = closeEditor;
+document.getElementById('edCloseBtn').ontouchend = function(e){e.preventDefault();closeEditor();};
+document.getElementById('edCancelBtn').onclick = closeEditor;
+document.getElementById('edCancelBtn').ontouchend = function(e){e.preventDefault();closeEditor();};
+document.getElementById('overlayEditor').onclick = function(e){if(e.target===this)closeEditor();};
+document.getElementById('overlayEditor').ontouchend = function(e){if(e.target===this){e.preventDefault();closeEditor();}};
+
+document.getElementById('edSaveBtn').onclick = function() {
+  var btn = this, sb = document.getElementById('edStatus');
+  var content = document.getElementById('edContent').value.trim();
+  var msg = document.getElementById('edMsg').value.trim() || 'Edit '+editingName+': update SKILL.md';
+  if(!content) { showStatus('Content cannot be empty','var(--red)'); return; }
+  btn.disabled = true; btn.textContent = '⏳ Creating PR...';
+  showStatus('Saving and creating pull request...','var(--muted)');
+  fetch('/api/save-skill', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name:editingName, content:content, message:msg})
+  })
+  .then(function(r){return r.json();})
+  .then(function(r){
+    if(r.success) showStatus('✅ <span style="font-size:13px">PR created:</span> <a href="'+r.pr_url+'" target="_blank" style="color:var(--accent);text-decoration:underline;word-break:break-all">'+r.pr_url+'</a>','var(--green)');
+    else showStatus('❌ '+(r.error||'Unknown error'),'var(--red)');
+  })
+  .catch(function(e){showStatus('❌ Network error: '+e.message,'var(--red)');})
+  .finally(function(){btn.disabled=false;btn.textContent='💾 Save & Create PR';});
 };
-document.getElementById('detailCloseBtn').ontouchend = function(e) {
-  e.preventDefault();
-  document.getElementById('detailOverlay').classList.add('hidden');
-};
-document.getElementById('detailOverlay').onclick = function(e) {
-  if(e.target === this) {
-    document.getElementById('detailOverlay').classList.add('hidden');
-  }
-};
-document.getElementById('detailOverlay').ontouchend = function(e) {
-  if(e.target === this) {
-    e.preventDefault();
-    document.getElementById('detailOverlay').classList.add('hidden');
-  }
-};
-// Escape key
-document.addEventListener('keydown', function(e) {
-  if(e.key === 'Escape') document.getElementById('detailOverlay').classList.add('hidden');
-});
+
+function showStatus(text,color) {
+  var el = document.getElementById('edStatus');
+  el.style.display = 'block';
+  el.style.color = color;
+  el.style.border = '1px solid ' + (color.indexOf('var')===0 ? 'var(--border)' : color);
+  el.innerHTML = text;
+}
 
 reloadData();
 </script>
