@@ -1,0 +1,160 @@
+{
+  "schema": "v1",
+  "updated": "2026-04-25T18:04:04Z",
+  "lifecycle_stages": [
+    "draft",
+    "proposed",
+    "reviewed",
+    "staged",
+    "released",
+    "deprecated"
+  ],
+  "skills": {
+    "skill-lifecycle": {
+      "name": "skill-lifecycle",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T17:00:00Z",
+      "updated": "2026-04-25T17:15:30Z",
+      "author": "Michal / Rick",
+      "owners": [
+        "Michal"
+      ],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Initial release of Skill Lifecycle Management system"
+        }
+      ]
+    },
+    "consulting-frameworks-analyzer": {
+      "name": "consulting-frameworks-analyzer",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "find-skills": {
+      "name": "find-skills",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "proactive-agent": {
+      "name": "proactive-agent",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "instincts": {
+      "name": "instincts",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "knowledge": {
+      "name": "knowledge",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "last30days": {
+      "name": "last30days",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "ocr-local": {
+      "name": "ocr-local",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    },
+    "paperclip-assign": {
+      "name": "paperclip-assign",
+      "stage": "released",
+      "version": "1.0.0",
+      "created": "2026-04-25T18:04:04Z",
+      "updated": "2026-04-25T18:04:04Z",
+      "author": "",
+      "owners": [],
+      "changelog": [
+        {
+          "date": "2026-04-25",
+          "stage": "released",
+          "note": "Imported from existing skill directory"
+        }
+      ]
+    }
+  }
+}

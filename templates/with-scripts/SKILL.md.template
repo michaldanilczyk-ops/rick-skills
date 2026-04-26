@@ -1,0 +1,25 @@
+---
+name: PLACEHOLDER_NAME
+description: PLACEHOLDER_DESCRIPTION
+---
+
+# PLACEHOLDER_NAME
+
+## Scripts
+
+This skill includes scripts for deterministic operations:
+
+- `scripts/example.sh` — brief description
+
+## Usage
+
+<!-- Reference the scripts and when to run them vs doing things inline -->
+
+1. Step one
+2. Run `scripts/example.sh` for the next step
+3. Step three
+
+## When to Script vs. Inline
+
+- **Use scripts for**: Complex, multi-step, or repetitive operations
+- **Do inline**: Simple one-liners, conditional logic, exploration

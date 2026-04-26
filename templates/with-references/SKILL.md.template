@@ -1,0 +1,26 @@
+---
+name: PLACEHOLDER_NAME
+description: PLACEHOLDER_DESCRIPTION
+---
+
+# PLACEHOLDER_NAME
+
+## Quick Start
+
+Core workflow (kept concise — details live in references):
+
+1. Step one
+2. Step two
+
+## References
+
+Only load these when needed:
+
+- **For advanced patterns**: See `references/advanced.md`
+- **For API details**: See `references/api.md`
+- **For examples**: See `references/examples.md`
+
+## Important
+
+- Gotcha 1
+- Gotcha 2

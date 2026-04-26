@@ -1,0 +1,27 @@
+---
+name: PLACEHOLDER_NAME
+description: PLACEHOLDER_DESCRIPTION
+---
+
+# PLACEHOLDER_NAME
+
+Brief overview of what this skill does.
+
+## When to Use
+
+- Scenario 1: ...
+- Scenario 2: ...
+
+## Instructions
+
+<!-- Clear, concise instructions for the agent. Assume the agent is already smart.
+     Only add context the agent doesn't already have. -->
+
+1. Step one
+2. Step two
+3. Step three
+
+## Important Notes
+
+- Gotchas or edge cases
+- Things that look right but aren't

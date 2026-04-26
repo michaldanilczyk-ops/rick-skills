@@ -1,0 +1,20 @@
+{
+  "triggers": [
+    "User asks about [topic X]",
+    "User wants to [do specific action Y]"
+  ],
+  "non_triggers": [
+    "General questions about related but different topics",
+    "Requests that should use a different, more specific skill"
+  ],
+  "tests": [
+    {
+      "prompt": "Can you help me with [task related to this skill]?",
+      "expected": "Should activate the skill and provide [specific output]"
+    },
+    {
+      "prompt": "[Edge case scenario that should NOT trigger]",
+      "expected": "Should NOT activate this skill"
+    }
+  ]
+}

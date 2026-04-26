@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Skill Lifecycle Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e1e4ed;
+    --muted: #8b8fa3;
+    --accent: #6366f1;
+    --green: #22c55e;
+    --yellow: #eab308;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --slate: #64748b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+  }
+  header h1 {
+    font-size: 24px; font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn {
+    background: var(--card); color: var(--text); border: 1px solid var(--border);
+    padding: 10px 16px; border-radius: 8px; font-size: 14px;
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+  }
+  .btn-primary { background: var(--accent); border-color: var(--accent); }
+  input[type="file"] { display: none; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px; text-align: center;
+  }
+  .stat-card .num { font-size: 28px; font-weight: 700; }
+  .stat-card .lbl { font-size: 11px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .pipeline {
+    display: flex; gap: 0; margin-bottom: 24px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden; flex-wrap: wrap;
+  }
+  .pipeline-stage {
+    flex: 1; min-width: 50px; padding: 10px 6px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .pipeline-stage:last-child { border-right: none; }
+  .pipeline-stage .sn { font-size: 10px; text-transform: uppercase; color: var(--muted); }
+  .pipeline-stage .sc { font-size: 20px; font-weight: 700; margin-top: 2px; }
+  .pipeline-stage.active { background: rgba(99,102,241,0.1); }
+
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px; margin-bottom: 24px;
+  }
+  .kanban-col {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 10px;
+  }
+  .kanban-col h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--muted); margin-bottom: 6px; padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .kanban-item {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 10px; margin-bottom: 4px;
+    font-size: 13px;
+  }
+  .kanban-item:active { background: rgba(99,102,241,0.15); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead { display: none; }
+  tbody tr {
+    display: block; padding: 12px; border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  tbody tr:active { background: rgba(99,102,241,0.1); }
+  tbody tr td {
+    display: inline; padding: 0; border: none; background: none !important;
+  }
+  tbody tr td:first-child::after { content: " — "; color: var(--muted); }
+  tbody tr td:nth-child(2)::after { content: " · "; color: var(--muted); }
+
+  .stage-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .stage-draft { background: rgba(100,116,139,0.2); color: var(--slate); }
+  .stage-proposed { background: rgba(59,130,246,0.2); color: var(--blue); }
+  .stage-reviewed { background: rgba(234,179,8,0.2); color: var(--yellow); }
+  .stage-staged { background: rgba(249,115,22,0.2); color: var(--orange); }
+  .stage-released { background: rgba(34,197,94,0.2); color: var(--green); }
+  .stage-deprecated { background: rgba(239,68,68,0.2); color: var(--red); }
+
+  .hidden { display: none !important; }
+
+  /* ═══ Detail Panel (replaces modal) ═══ */
+  .detail-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6); z-index: 2000;
+    overflow-y: auto;
+    transition: opacity 0.2s;
+  }
+  .detail-panel {
+    background: var(--card);
+    margin: 60px auto 30px;
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+  }
+  @media (max-width: 500px) {
+    .detail-panel {
+      margin: 0;
+      border-radius: 0;
+      min-height: 100vh;
+      max-width: 100%;
+    }
+    .detail-overlay {
+      display: block;
+    }
+  }
+  .detail-panel .d-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .detail-panel .d-header h2 { margin: 0; font-size: 20px; }
+  .detail-panel .d-close {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 20px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    line-height: 1;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .detail-panel .d-close:active { background: rgba(255,255,255,0.15); }
+  .d-field { margin-bottom: 12px; }
+  .d-label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .d-value { font-size: 15px; }
+  .d-changelog { margin-top: 4px; }
+  .d-changelog-entry {
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .d-changelog-entry:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div>
+      <h1>🔬 Skill Lifecycle</h1>
+      <div class="subtitle">Tap any skill for details</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
+      <button class="btn btn-primary" onclick="reloadData()">↻ Reload</button>
+      <input type="file" id="fileInput" accept=".json" onchange="loadFromFile(event)">
+    </div>
+  </header>
+
+  <div class="stats" id="statsRow"></div>
+  <div class="pipeline" id="pipeline"></div>
+  <div class="kanban" id="kanban"></div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+    <div id="skillList"></div>
+  </div>
+</div>
+
+<!-- Detail Panel (full-screen overlay on mobile) -->
+<div id="detailOverlay" class="detail-overlay hidden">
+  <div class="detail-panel" id="detailPanel">
+    <div class="d-header">
+      <h2 id="detailName">Skill</h2>
+      <button class="d-close" id="detailCloseBtn">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+<script>
+const STAGES = ['draft','proposed','reviewed','staged','released','deprecated'];
+const STAGE_COLORS = {draft:'var(--slate)',proposed:'var(--blue)',reviewed:'var(--yellow)',staged:'var(--orange)',released:'var(--green)',deprecated:'var(--red)'};
+
+let data = null;
+
+function reloadData() {
+  fetch('/skills-registry.json')
+    .then(r => { if(!r.ok) throw Error(); return r.json(); })
+    .then(d => { data = d; render(); })
+    .catch(() => { data = {skills:{}}; render(); });
+}
+
+function loadFromFile(e) {
+  var f = e.target.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(ev) {
+    try { data = JSON.parse(ev.target.result); render(); } catch(ex) { alert('Bad JSON'); }
+  };
+  r.readAsText(f);
+}
+
+function render() {
+  var skills = data && data.skills || {};
+  var entries = Object.keys(skills).map(function(k) { return [k, skills[k]]; });
+  renderStats(entries);
+  renderPipeline(entries);
+  renderKanban(entries);
+  renderList(entries);
+}
+
+function renderStats(entries) {
+  var total = entries.length;
+  var released = entries.filter(function(e) { return e[1].stage === 'released'; }).length;
+  var draft = entries.filter(function(e) { return e[1].stage === 'draft'; }).length;
+  var deprecated = entries.filter(function(e) { return e[1].stage === 'deprecated'; }).length;
+  document.getElementById('statsRow').innerHTML =
+    '<div class="stat-card"><div class="num" style="color:var(--accent)">'+total+'</div><div class="lbl">Total</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--green)">'+released+'</div><div class="lbl">Released</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--slate)">'+draft+'</div><div class="lbl">Drafts</div></div>'+
+    '<div class="stat-card"><div class="num" style="color:var(--red)">'+deprecated+'</div><div class="lbl">Deprecated</div></div>';
+}
+
+function renderPipeline(entries) {
+  document.getElementById('pipeline').innerHTML = STAGES.map(function(s) {
+    var c = entries.filter(function(e) { return e[1].stage === s; }).length;
+    var active = c > 0 ? ' active' : '';
+    return '<div class="pipeline-stage'+active+'"><div class="sn">'+s+'</div><div class="sc" style="color:'+STAGE_COLORS[s]+'">'+c+'</div></div>';
+  }).join('');
+}
+
+function renderKanban(entries) {
+  document.getElementById('kanban').innerHTML = STAGES.map(function(s) {
+    var items = entries.filter(function(e) { return e[1].stage === s; });
+    var html = '<div class="kanban-col"><h3 style="color:'+STAGE_COLORS[s]+'">'+s.charAt(0).toUpperCase()+s.slice(1)+'</h3>';
+    items.forEach(function(e) {
+      html += '<div class="kanban-item" onclick="showDetail(\''+e[0]+'\')"><div>'+e[0]+'</div><div style="font-size:11px;color:var(--muted)">v'+ (e[1].version||'?') +'</div></div>';
+    });
+    html += '</div>';
+    return html;
+  }).join('');
+}
+
+function renderList(entries) {
+  var el = document.getElementById('skillList');
+  if(entries.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:48px 24px;color:var(--muted)"><h3 style="color:var(--text);margin-bottom:8px">No skills tracked</h3><p>Run skillctl init to create one</p></div>';
+    return;
+  }
+  var html = '<table><tbody>';
+  entries.sort(function(a,b) {
+    var ia = STAGES.indexOf(a[1].stage);
+    var ib = STAGES.indexOf(b[1].stage);
+    return ia - ib || (a[0] < b[0] ? -1 : (a[0] > b[0] ? 1 : 0));
+  });
+  entries.forEach(function(e) {
+    var name = e[0], s = e[1];
+    var stageClass = 'stage-'+(s.stage||'draft');
+    var ver = s.version || '0.1.0';
+    var author = s.author || '—';
+    var updated = s.updated ? s.updated.slice(0,10) : '';
+    html += '<tr onclick="showDetail(\''+name+'\')"><td><strong>'+name+'</strong></td><td><span class="stage-badge '+stageClass+'">'+(s.stage||'?')+'</span></td><td>v'+ver+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+function showDetail(name) {
+  if(!data || !data.skills[name]) return;
+  var s = data.skills[name];
+  document.getElementById('detailName').textContent = name;
+  var stageClass = 'stage-'+(s.stage||'draft');
+  var changelog = s.changelog || [];
+  var html = '';
+  html += '<div class="d-field"><div class="d-label">Stage</div><div class="d-value"><span class="stage-badge '+stageClass+'">'+(s.stage||'unknown')+'</span></div></div>';
+  html += '<div class="d-field"><div class="d-label">Version</div><div class="d-value">v'+(s.version||'0.1.0')+'</div></div>';
+  if(s.author) html += '<div class="d-field"><div class="d-label">Author</div><div class="d-value">'+s.author+'</div></div>';
+  if(s.owners && s.owners.length) html += '<div class="d-field"><div class="d-label">Owners</div><div class="d-value">'+s.owners.join(', ')+'</div></div>';
+  if(s.created) html += '<div class="d-field"><div class="d-label">Created</div><div class="d-value">'+s.created.slice(0,10)+'</div></div>';
+  if(s.updated) html += '<div class="d-field"><div class="d-label">Last Updated</div><div class="d-value">'+s.updated.slice(0,10)+'</div></div>';
+  if(changelog.length) {
+    html += '<div class="d-field"><div class="d-label">Changelog</div><div class="d-changelog">';
+    changelog.forEach(function(e) {
+      html += '<div class="d-changelog-entry"><span class="stage-badge stage-'+e.stage+'">'+e.stage+'</span> <span>'+ (e.date||'') +': '+ (e.note||'') +'</span></div>';
+    });
+    html += '</div></div>';
+  }
+  document.getElementById('detailBody').innerHTML = html;
+  document.getElementById('detailOverlay').classList.remove('hidden');
+}
+
+// Close handlers — DIRECT, no event delegation, no bubbling issues
+document.getElementById('detailCloseBtn').onclick = function() {
+  document.getElementById('detailOverlay').classList.add('hidden');
+};
+document.getElementById('detailCloseBtn').ontouchend = function(e) {
+  e.preventDefault();
+  document.getElementById('detailOverlay').classList.add('hidden');
+};
+document.getElementById('detailOverlay').onclick = function(e) {
+  if(e.target === this) {
+    document.getElementById('detailOverlay').classList.add('hidden');
+  }
+};
+document.getElementById('detailOverlay').ontouchend = function(e) {
+  if(e.target === this) {
+    e.preventDefault();
+    document.getElementById('detailOverlay').classList.add('hidden');
+  }
+};
+// Escape key
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape') document.getElementById('detailOverlay').classList.add('hidden');
+});
+
+reloadData();
+</script>
+</body>
+</html>

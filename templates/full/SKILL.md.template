@@ -1,0 +1,29 @@
+---
+name: PLACEHOLDER_NAME
+description: PLACEHOLDER_DESCRIPTION
+---
+
+# PLACEHOLDER_NAME
+
+## Quick Start
+
+1. Step one
+2. Step two
+
+## Scripts
+
+- `scripts/process.sh` — Deterministic processing. Run when the task needs exact output.
+
+## References
+
+- **Advanced patterns**: See `references/advanced.md`
+- **API reference**: See `references/api.md`
+
+## Resources
+
+- `assets/template.txt` — Output template to use as base
+
+## Important Notes
+
+- Keep these edge cases in mind
+- Run validation after major changes
