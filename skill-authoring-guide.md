@@ -18,8 +18,7 @@
 10. [Progressive Disclosure Pattern](#10-progressive-disclosure-pattern)
 11. [Best Practices & Tips](#11-best-practices--tips)
 12. [Testing, Validating & Packaging](#12-testing-validating--packaging)
-13. [Converting Company Knowledge into Skills](#13-converting-company-knowledge-into-skills)
-14. [Glossary](#14-glossary)
+13. [Glossary](#13-glossary)
 
 ---
 
@@ -982,92 +981,20 @@ The `.skill` file is a standard ZIP file with a `.skill` extension. It can be:
 
 ---
 
-## 13. Converting Company Knowledge into Skills
 
-This section describes how to turn real business documents — proposals, contracts, presentations, requirements — into actionable skills for your team's AI agents.
+## 13. Glossary
 
-### Why Convert Company Documents into Skills?
-
-Many companies have valuable knowledge locked in documents that get used once and forgotten:
-
-- **Proposals** — Contain deep understanding of client needs, solution architecture, pricing models
-- **Contracts** — Define terms, deliverables, SLAs, obligations
-- **Presentations** — Contain messaging, positioning, competitive analysis
-- **Requirement specifications** — Define scope, workflows, user stories
-- **Meeting notes** — Capture decisions, stakeholder preferences, context
-- **Industry reports** — Contain domain expertise and benchmarks
-
-Instead of keeping these as static PDFs, convert them into skills that guide the agent when working on similar projects.
-
-### The Document-to-Skill Pipeline
-
-```
-Raw Document → Extract Knowledge → Structure → Skill
-     ↓              ↓                  ↓          ↓
-  Proposal    Key facts,            SKILL.md   Ready to use
-  Contract    decisions,            + refs/    by agents
-  Slides      workflows             + assets/
-```
-
-### Step 1: Inventory Your Documents
-
-Start by identifying which documents are worth converting:
-
-| Document Type | Skill Potential | Priority |
-|---|---|---|
-| Winning proposals | High — defines your consulting methodology | ⭐ High |
-| Client contracts | High — terms, SLAs, obligations to reference | ⭐ High |
-| Project presentations | Medium — messaging, positioning, deliverables | Medium |
-| Internal process docs | High — repeatable workflows | ⭐ High |
-| Meeting notes (strategic) | Medium — key decisions and context | Medium |
-| Meeting notes (tactical) | Low — too specific, situational | Low |
-| Competitive analysis | Medium — reference for positioning | Medium |
-
-### Step 2: Extract What Matters
-
-Don't put the entire document into a skill. Extract ONLY what the agent needs:
-
-```markdown
-# Converting a Proposal into a Skill
-
-## Source: Proposal for Acme Corp (Salesforce Implementation)
-
-### Extract these elements:
-1. **Client context** → references/client-background.md
-   - Industry, size, pain points
-   - Key stakeholders and their priorities
-2. **Solution architecture** → references/solution-design.md
-   - What was proposed, why
-   - Technical decisions and rationale
-3. **Methodology** → SKILL.md workflow
-   - The step-by-step approach used
-   - Phases, milestones, deliverables
-4. **Pricing model** → references/pricing.md
-   - Rate cards, package options
-   - Value drivers and ROI calculations
-5. **Risk assessment** → references/risks.md
-   - Identified risks and mitigations
-   - Assumptions and constraints
-
-### Discard:
-- Boilerplate company overview (the agent should infer this)
-- Generic methodology descriptions the agent already knows
-- Formatting and branding elements
-- Appendices with standard terms
-```
-
-### Step 3: Create the Skill Structure
-
-A company knowledge skill has a different anatomy from a pure workflow skill:
-
-```
-acme-corp-project/
-├── SKILL.md                    ← Workflow for working with this client
-├── references/
-│   ├── client-background.md    ← Client context, industry, stakeholders
-│   ├── solution-design.md      ← Technical architecture decisions
-│   ├── pricing.md              ← Pricing model and value drivers
-│   ├── risks.md                ← Known risks and mitigations
-│   └── deliverables.md         ← What was promised and when
-└── assets/
-    └── proposal-template.pptx  ← Template for
+| Term | Definition |
+|---|---|
+| **Skill** | A self-contained package (SKILL.md + optional resources) that extends an agent's capabilities |
+| **SKILL.md** | The main instructions file — the only file an agent reads automatically |
+| **Frontmatter** | YAML metadata at the top of SKILL.md (`name` and `description` + optional fields) |
+| **Trigger** | A phrase or condition that causes the agent to activate a skill |
+| **Reference** | A supplemental file in `references/` that's loaded on demand |
+| **Script** | An executable file (Python, Bash) in `scripts/` that the agent can run |
+| **Asset** | A file in `assets/` used in the agent's output (templates, images) |
+| **Progressive Disclosure** | Loading content in layers (frontmatter → SKILL.md → references) to save context |
+| **Context Window** | The total amount of text the AI agent can "see" at once |
+| **Evals** | Test prompts that verify a skill works as expected |
+| **.skill file** | A distributable skill package (ZIP format with .skill extension) |
+| **ClawHub** | Public registry for discovering and installing agent skills |
